@@ -13,17 +13,25 @@ jobs:
     name: Build and Deploy Containers
     runs-on: ubuntu-22.04
 
-    steps:      
+    steps:
+      # Étape 1 : Cloner le dépôt
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Set up Docker
+      # Étape 2 : Installer Docker sans conflits
+      - name: Install Docker
         run: |
           sudo apt-get update
-          sudo apt-get install -y docker.io docker-compose
+          sudo apt-get remove -y containerd
+          sudo apt-get install -y apt-transport-https ca-certificates curl software-properties-common
+          curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+          echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu jammy stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+          sudo apt-get update
+          sudo apt-get install -y docker-ce docker-ce-cli containerd.io
           docker --version
           docker-compose --version
-    
+
+      # Étape 3 : Construire et démarrer les conteneurs
       - name: Build and Start Containers
         run: |
           docker-compose up -d
