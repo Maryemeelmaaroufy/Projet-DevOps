@@ -1,0 +1,32 @@
+name: DevSecOps CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  devsecops:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker.io
+          sudo systemctl start docker
+
+      - name: Start Docker Compose
+        run: |
+          docker-compose up -d
+
+      - name: Run Nessus Scan
+        run: |
+          chmod +x nessus/nessus-scan.sh
+          ./nessus/nessus-scan.sh
