@@ -14,15 +14,12 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
-      # Étape 1 : Cloner le dépôt
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      # Étape 2 : Installer Docker et Docker Compose
       - name: Install Docker and Docker Compose
         run: |
           sudo apt-get update
-          sudo apt-get remove -y containerd
           sudo apt-get install -y apt-transport-https ca-certificates curl software-properties-common
           curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
           echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu jammy stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
@@ -31,13 +28,10 @@ jobs:
           sudo curl -L "https://github.com/docker/compose/releases/download/v2.22.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
           sudo chmod +x /usr/local/bin/docker-compose
           sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
-          docker --version
-          docker-compose --version
 
-      # Étape 3 : Construire et démarrer les conteneurs
       - name: Build and Start Containers
         run: |
-          docker-compose up -d
+          docker-compose -f nessus/docker-compose.yml up -d
           docker ps
 
   nessus-scan:
@@ -45,8 +39,15 @@ jobs:
     runs-on: ubuntu-22.04
     needs: build-and-deploy
 
-    steps:    
-      - name: Run Nessus Scan
-        run: |
-          chmod +x nessus/nessus-scan.sh
-          ./nessus/nessus-scan.sh
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Check File Existence
+        run: ls -l nessus/nessus-scan.sh
+
+      - name: Make Nessus Scan Script Executable
+        run: chmod +x nessus/nessus-scan.sh
+
+      - name: Run Nessus Scan Script
+        run: ./nessus/nessus-scan.sh
