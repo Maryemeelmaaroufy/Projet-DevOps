@@ -1,4 +1,4 @@
-name: DevSecOps CI/CD Pipeline
+name: DevSecOps Pipeline
 
 on:
   push:
@@ -9,23 +9,32 @@ on:
       - main
 
 jobs:
-  devsecops:
-    runs-on: ubuntu-latest
+  build-and-deploy:
+    name: Build and Deploy Containers
+    runs-on: ubuntu-22.04
 
-    steps:
-      - name: Checkout code
+    steps:      
+      - name: Checkout Code
         uses: actions/checkout@v3
 
       - name: Set up Docker
         run: |
           sudo apt-get update
-          sudo apt-get install -y docker.io
-          sudo systemctl start docker
-
-      - name: Start Docker Compose
+          sudo apt-get install -y docker.io docker-compose
+          docker --version
+          docker-compose --version
+    
+      - name: Build and Start Containers
         run: |
           docker-compose up -d
+          docker ps
 
+  nessus-scan:
+    name: Nessus Vulnerability Scan
+    runs-on: ubuntu-22.04
+    needs: build-and-deploy
+
+    steps:    
       - name: Run Nessus Scan
         run: |
           chmod +x nessus/nessus-scan.sh
