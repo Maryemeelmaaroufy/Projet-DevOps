@@ -31,7 +31,7 @@ jobs:
 
       - name: Build and Start Containers
         run: |
-          docker-compose -f nessus/docker-compose.yml up -d
+          docker-compose docker-compose.yml up -d
           docker ps
 
   nessus-scan:
