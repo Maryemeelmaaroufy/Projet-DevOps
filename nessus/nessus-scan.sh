@@ -1,4 +1,8 @@
 #!/bin/bash
+if ! docker ps | grep -q "nessus"; then
+  echo "Erreur : le container Nessus n'est pas en cours d'exécution."
+  exit 1
+fi
 docker exec nessus curl -k -X POST https://localhost:8834/scans \
   -H "Content-Type: application/json" \
   -H "X-Cookie: token=$NESSUS_TOKEN" \
@@ -13,6 +17,7 @@ docker exec nessus curl -k -X POST https://localhost:8834/scans \
       "policy_id": "1"
     }
   }'
+
 echo "Scan Nessus lancé pour Akaunting"
 sleep 30
 SCAN_ID=$(docker exec nessus curl -k -X GET "https://localhost:8834/scans" -H "X-Cookie: token=$NESSUS_TOKEN" | jq '.scans[0].id')
