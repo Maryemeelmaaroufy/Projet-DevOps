@@ -5,7 +5,7 @@ services:
     image: akaunting/akaunting
     container_name: akaunting
     ports:
-      - "8080:80" 
+      - "8080:80"
     environment:
       APP_ENV: local
       APP_DEBUG: "true"
@@ -24,7 +24,7 @@ services:
     container_name: mysql
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: rootpassword 
+      MYSQL_ROOT_PASSWORD: rootpassword
       MYSQL_DATABASE: akaunting_db
       MYSQL_USER: akaunting_user
       MYSQL_PASSWORD: akaunting_password
@@ -39,9 +39,9 @@ services:
     image: tenableofficial/nessus
     container_name: nessus
     ports:
-      - "8834:8834" 
+      - "8834:8834"
     environment:
-      ACCEPT_EULA: "yes" 
+      ACCEPT_EULA: "yes"
     networks:
       - app-network
 
