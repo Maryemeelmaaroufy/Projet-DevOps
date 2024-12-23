@@ -32,7 +32,7 @@ jobs:
       - name: Build and Start Containers
         run: |
           docker-compose up -d
-          docker ps
+          docker ps 
 
   nessus-scan:
     name: Nessus Vulnerability Scan
@@ -45,7 +45,7 @@ jobs:
 
       - name: Ensure Reports Directory Exists
         run: |
-          mkdir -p reports  # Crée le répertoire 'reports' s'il n'existe pas
+          mkdir -p reports 
 
       - name: Make Nessus Scan Script Executable
         run: chmod +x nessus/nessus-scan.sh
@@ -65,4 +65,4 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: nessus_report
-          path: ./reports/nessus_report.json    
+          path: ./reports/nessus_report.json
