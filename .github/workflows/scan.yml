@@ -32,7 +32,7 @@ jobs:
       - name: Build and Start Containers
         run: |
           docker-compose up -d
-          docker ps 
+          docker ps  
 
   nessus-scan:
     name: Nessus Vulnerability Scan
@@ -53,8 +53,11 @@ jobs:
       - name: Wait for Nessus Container to Start
         run: |
           echo "Attente du démarrage du container Nessus..."
-          sleep 20  
-          docker ps  
+          while ! docker ps -q -f "name=nessus"; do
+            echo "Container Nessus non encore démarré. Attente de 10 secondes..."
+            sleep 10 
+          done
+          echo "Container Nessus est prêt."
 
       - name: Run Nessus Scan Script
         run: |
