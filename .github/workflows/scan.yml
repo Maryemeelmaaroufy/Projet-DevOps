@@ -52,11 +52,14 @@ jobs:
 
       - name: Wait for Nessus Container to Start
         run: |
+          echo "Attente du démarrage du container Nessus..."
           sleep 20  
-          docker ps 
+          docker ps  
 
       - name: Run Nessus Scan Script
-        run: ./nessus/nessus-scan.sh
+        run: |
+          docker ps  
+          ./nessus/nessus-scan.sh
 
       - name: Upload Nessus Report to GitHub
         uses: actions/upload-artifact@v3
