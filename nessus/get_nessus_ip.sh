@@ -1,4 +1,4 @@
-!/bin/bash
+#!/bin/bash
 Récupérer l'adresse IP du container Nessus
 NESSUS_IP=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' nessus)
 if [ -z "$NESSUS_IP" ]; then
