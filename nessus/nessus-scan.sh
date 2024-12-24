@@ -1,29 +1,19 @@
 #!/bin/bash
-if [ ! -f nessus_ip.txt ]; then
-  echo "Erreur : Le fichier nessus_ip.txt contenant l'IP de Nessus est introuvable."
+if [ ! -f ./nessus/nessus_ip.txt ]; then
+  echo "Erreur : Le fichier nessus_ip.txt n'existe pas. Veuillez exécuter get_nessus_ip.sh d'abord."
   exit 1
 fi
-NESSUS_IP=$(cat nessus_ip.txt)
+NESSUS_IP=$(cat ./nessus/nessus_ip.txt)
 if [ -z "$NESSUS_IP" ]; then
-  echo "Erreur : IP de Nessus non valide."
+  echo "Erreur : Impossible de lire l'IP du conteneur Nessus."
   exit 1
 fi
-echo "IP de Nessus récupérée : $NESSUS_IP"
-SCAN_OUTPUT=$(curl -k -X POST https://$NESSUS_IP:8834/scans \
-  -H "Content-Type: application/json" \
-  -d '{
-    "uuid": "basic",
-    "settings": {
-      "name": "Akaunting Scan",
-      "enabled": true,
-      "text_targets": "akaunting",
-      "launch": "ON_DEMAND",
-      "scanner_id": "1",
-      "policy_id": "1"
-    }
-  }')
-REPORT_DIR="./reports"
-mkdir -p $REPORT_DIR
-REPORT_FILE="$REPORT_DIR/nessus_report.json"
-echo "$SCAN_OUTPUT" > $REPORT_FILE
-echo "Rapport de vulnérabilité sauvegardé dans $REPORT_FILE"
+echo "Scan Nessus lancé pour Akaunting"
+docker exec nessus nessuscli scan --target "$NESSUS_IP" --output /tmp/nessus_scan.json
+docker cp nessus:/tmp/nessus_scan.json ./reports/nessus_report.json
+if [ -f ./reports/nessus_report.json ]; then
+  echo "Rapport de vulnérabilité téléchargé et copié dans ./reports/nessus_report.json"
+else
+  echo "Erreur : Le rapport de vulnérabilité n'a pas pu être copié."
+  exit 1
+fi
