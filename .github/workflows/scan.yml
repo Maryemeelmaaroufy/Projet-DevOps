@@ -39,10 +39,10 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Get Nessus Container IP
-        run: ./get_nessus_ip.sh
+        run: .nessus/get_nessus_ip.sh
 
       - name: Run Nessus Scan
-        run: ./nessus-scan.sh
+        run: .nessus/nessus-scan.sh
 
       - name: Upload Nessus Report
         uses: actions/upload-artifact@v3
