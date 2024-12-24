@@ -54,5 +54,5 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: nessus-report
-          path: ./reports/nessus_report.jsonn
+          path: ./reports/nessus_report.json
           
