@@ -2,36 +2,21 @@ version: '3.8'
 
 services:
   akaunting:
-    image: akaunting/akaunting
+    image: akaunting/akaunting:latest
     container_name: akaunting
     ports:
-      - "8080:80"
-    environment:
-      APP_ENV: local
-      APP_DEBUG: "true"
-      DB_HOST: mysql
-      DB_PORT: 3306
-      DB_DATABASE: akaunting_db
-      DB_USERNAME: akaunting_user
-      DB_PASSWORD: akaunting_password
-    depends_on:
-      - mysql
+      - "8000:80"
     networks:
       - app-network
 
   mysql:
-    image: mysql:8.0
+    image: mysql:5.7
     container_name: mysql
-    restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: akaunting_db
-      MYSQL_USER: akaunting_user
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: akaunting
+      MYSQL_USER: akaunting
       MYSQL_PASSWORD: akaunting_password
-    ports:
-      - "3306:3306"
-    volumes:
-      - mysql_data:/var/lib/mysql
     networks:
       - app-network
 
@@ -44,9 +29,6 @@ services:
       ACCEPT_EULA: "yes"
     networks:
       - app-network
-
-volumes:
-  mysql_data:
 
 networks:
   app-network:
