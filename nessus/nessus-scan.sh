@@ -1,26 +1,15 @@
 #!/bin/bash
-if ! docker ps | grep -q "nessus"; then
-  echo "Erreur : le container Nessus n'est pas en cours d'exécution."
+TARGET_IP=$1
+NESSUS_IP=$(cat nessus_ip.txt)
+if [ -z "$TARGET_IP" ] || [ -z "$NESSUS_IP" ]; then
+  echo "Erreur : L'adresse cible ou l'adresse IP de Nessus n'est pas définie."
   exit 1
 fi
-docker exec nessus curl -k -X POST https://localhost:8834/scans \
-  -H "Content-Type: application/json" \
-  -H "X-Cookie: token=$NESSUS_TOKEN" \
-  -d '{
-    "uuid": "basic",
-    "settings": {
-      "name": "Akaunting Scan",
-      "enabled": true,
-      "text_targets": "akaunting",
-      "launch": "ON_DEMAND",
-      "scanner_id": "1",
-      "policy_id": "1"
-    }
-  }'
-
-echo "Scan Nessus lancé pour Akaunting"
-sleep 30
-SCAN_ID=$(docker exec nessus curl -k -X GET "https://localhost:8834/scans" -H "X-Cookie: token=$NESSUS_TOKEN" | jq '.scans[0].id')
-docker exec nessus curl -k -X GET "https://localhost:8834/scans/${SCAN_ID}/export" -H "X-Cookie: token=$NESSUS_TOKEN" -o /tmp/nessus_report.json
-docker cp nessus:/tmp/nessus_report.json ./reports/nessus_report.json
-echo "Rapport de vulnérabilité téléchargé et copié dans ./reports/nessus_report.json"
+echo "Scan Nessus lancé pour la cible : $TARGET_IP via Nessus à $NESSUS_IP"
+docker exec nessus nessuscli scan --target $TARGET_IP --name "Scan Akaunting" --output ./reports/nessus_report.json
+if [ -f "./reports/nessus_report.json" ]; then
+  echo "Rapport de vulnérabilité téléchargé et copié dans ./reports/nessus_report.json"
+else
+  echo "Erreur : Le rapport Nessus n'a pas été généré."
+  exit 1
+fi
