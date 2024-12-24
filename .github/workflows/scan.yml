@@ -38,6 +38,9 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
+      - name: Make Scripts Executable
+        run: chmod +x ./nessus/*.sh
+
       - name: Get Nessus Container IP
         run: ./nessus/get_nessus_ip.sh
 
