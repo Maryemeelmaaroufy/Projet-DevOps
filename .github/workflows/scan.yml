@@ -36,7 +36,7 @@ jobs:
 
       - name: Get Nessus Container IP
         run: |
-          ./get_nessus_ip.sh 
+          .nessus/get_nessus_ip.sh 
 
       - name: Make Nessus Scan Script Executable
         run: chmod +x nessus/nessus-scan.sh
