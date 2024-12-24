@@ -30,6 +30,9 @@ jobs:
           docker-compose up -d
           docker ps
 
+      - name: Verify Running Containers
+        run: docker ps
+
   nessus-scan:
     runs-on: ubuntu-22.04
     needs: build-and-deploy
